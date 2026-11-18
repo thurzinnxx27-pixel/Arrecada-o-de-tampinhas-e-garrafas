@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Arrecadação - Tampinhas e PET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #888;
+            --accent: #4caf50;
+            --border: #333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .hero { margin-bottom: 30px; }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .hero p { color: var(--text-muted); font-size: 15px; }
+
+        /* Cartões de Resumo */
+        .dashboard-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 40px; }
+        .card {
+            background-color: var(--card-bg); 
+            border: 1px solid var(--border);
+            border-radius: 8px; 
+            padding: 20px;
+        }
+        .card h2 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 32px; 
+            font-weight: 400; 
+            color: #fff; 
+            line-height: 1; 
+        }
+        .card p { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;}
+
+        /* Formulário */
+        .card-form {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+
+        .input-group { margin-bottom: 15px; }
+        label { 
+            display: block; 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            margin-bottom: 5px; 
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background-color: var(--bg-color); 
+            border: 1px solid var(--border);
+            color: #fff; 
+            padding: 12px; 
+            border-radius: 6px; 
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        
+        input:focus, select:focus { 
+            outline: none; 
+            border-color: var(--accent); 
+        }
+
+        button.btn-primary {
+            background-color: var(--accent); 
+            color: #fff; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 15px;
+            width: 100%;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        button.btn-primary:hover { background-color: #388e3c; }
+
+        /* Resultado */
+        .resultado-box {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .resultado-box h3 { font-size: 16px; color: #fff; margin-bottom: 10px; }
+        .resultado-box .valor-total { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 48px; 
+            color: var(--accent); 
+            font-weight: 600;
+        }
+        .resultado-box .detalhe { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
+
+        /* Histórico */
+        .historico-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .registro-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .registro-info h4 { color: #fff; font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+        .registro-info span { color: var(--text-muted); font-size: 13px; display: block; }
+        
+        .btn-excluir {
+            background: transparent;
+            border: 1px solid #f44336;
+            color: #f44336;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-excluir:hover { background-color: #f44336; color: #fff; }
+
+        .btn-limpar-tudo {
+            display: block; width: 100%; background: transparent;
+            border: 1px solid #f44336; color: #f44336; padding: 15px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px;
+            text-align: center; transition: 0.2s;
+        }
+        .btn-limpar-tudo:hover { background-color: #f44336; color: white; }
+
+        @media (max-width: 600px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 0; }
+            .hero h1 { font-size: 32px; }
+            .dashboard-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span>Projeto de Arrecadação</span>
+        <span>Equipe Sustentável</span>
+    </header>
+
+    <div class="hero">
+        <h1>Calculadora de Arrecadação</h1>
+        <p>Insira a quantidade de tampinhas e garrafas PET para calcular o valor total da equipe.</p>
+    </div>
+
+    <!-- Cartões de Resumo (Valores de Referência) -->
+    <div class="dashboard-cards">
+        <div class="card">
+            <h2>~350</h2>
+            <p>Tampinhas = 1kg</p>
+        </div>
+        <div class="card">
+            <h2>~25</h2>
+            <p>Garrafas PET = 1kg</p>
+        </div>
+        <div class="card">
+            <h2 id="count-registros">0</h2>
+            <p>Coletas Registradas</p>
+        </div>
+    </div>
+
+    <!-- Formulário de Cálculo -->
+    <div class="card-form">
+        <h3 style="color: #fff; margin-bottom: 15px; font-family: 'Playfair Display', serif;">Nova Coleta</h3>
+        
+        <div class="grid-2">
+            <div class="input-group">
+                <label>Quantidade de Tampinhas</label>
+                <input type="number" id="qtd-tampinhas" placeholder="Ex: 500" min="0">
+            </div>
+            <div class="input-group">
+                <label>Quantidade de Garrafas PET</label>
+                <input type="number" id="qtd-garrafas" placeholder="Ex: 50" min="0">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Ou, se tiver uma balança, insira o Peso Total (Opcional)</label>
+            <div class="grid-2">
+                <input type="number" id="peso-tampinhas" placeholder="Peso das tampinhas (kg)" step="0.1" min="0">
+                <input type="number" id="peso-garrafas" placeholder="Peso das garrafas (kg)" step="0.1" min="0">
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="calcularArrecadacao()">Calcular Valor</button>
+
+        <!-- Caixa de Resultado -->
+        <div id="resultado-box" class="resultado-box" style="display: none;">
+            <h3>Valor Total Estimado</h3>
+            <div class="valor-total" id="valor-total">R$ 0,00</div>
+            <div class="detalhe" id="detalhe-calculo"></div>
+        </div>
+    </div>
+
+    <!-- Histórico -->
+    <h2 class="historico-title">Histórico de Coletas</h2>
+    <div id="lista-historico"></div>
+
+    <button class="btn-limpar-tudo" onclick="limparTodoHistorico()">🗑️ Apagar Todo o Histórico</button>
+
+</div>
+
+<script>
+    // --- PREÇOS DE REFERÊNCIA (Média Nacional) ---
+    const PRECO_TAMPINHA_KG = 2.00; // R$ 2,00 por kg
+    const PRECO_GARRAFA_KG = 1.80;  // R$ 1,80 por kg
+    
+    // --- ESTIMATIVAS DE UNIDADES POR KG ---
+    const TAMPINHAS_POR_KG = 350;
+    const GARRAFAS_POR_KG = 25;
+
+    let historico = JSON.parse(localStorage.getItem('historico_arrecadacao')) || [];
+
+    function calcularArrecadacao() {
+        const qtdTampinhas = parseInt(document.getElementById('qtd-tampinhas').value) || 0;
+        const qtdGarrafas = parseInt(document.getElementById('qtd-garrafas').value) || 0;
+        
+        const pesoInputTampinhas = parseFloat(document.getElementById('peso-tampinhas').value) || 0;
+        const pesoInputGarrafas = parseFloat(document.getElementById('peso-garrafas').value) || 0;
+
+        let valorTampinhas = 0;
+        let valorGarrafas = 0;
+        let detalheTexto = "";
+
+        // Lógica: Se o peso foi informado, usa o peso. Senão, usa a quantidade estimada.
+        
+        // Cálculo Tampinhas
+        if (pesoInputTampinhas > 0) {
+            valorTampinhas = pesoInputTampinhas * PRECO_TAMPINHA_KG;
+            detalheTexto += `${pesoInputTampinhas}kg de tampinhas. `;
+        } else if (qtdTampinhas > 0) {
+            const pesoEstimadoTampinhas = qtdTampinhas / TAMPINHAS_POR_KG;
+            valorTampinhas = pesoEstimadoTampinhas * PRECO_TAMPINHA_KG;
+            detalheTexto += `${qtdTampinhas} tampinhas (~${pesoEstimadoTampinhas.toFixed(2)}kg). `;
+        }
+
+        // Cálculo Garrafas
+        if (pesoInputGarrafas > 0) {
+            valorGarrafas = pesoInputGarrafas * PRECO_GARRAFA_KG;
+            detalheTexto += `${pesoInputGarrafas}kg de garrafas. `;
+        } else if (qtdGarrafas > 0) {
+            const pesoEstimadoGarrafas = qtdGarrafas / GARRAFAS_POR_KG;
+            valorGarrafas = pesoEstimadoGarrafas * PRECO_GARRAFA_KG;
+            detalheTexto += `${qtdGarrafas} garrafas (~${pesoEstimadoGarrafas.toFixed(2)}kg). `;
+        }
+
+        const valorTotal = valorTampinhas + valorGarrafas;
+
+        if (valorTotal === 0) {
+            alert("Por favor, insira a quantidade ou o peso de algum material.");
+            return;
+        }
+
+        // Exibe o resultado
+        document.getElementById('valor-total').innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+        document.getElementById('detalhe-calculo').innerText = `Baseado em: ${detalheTexto}`;
+        document.getElementById('resultado-box').style.display = 'block';
+
+        // Salva no histórico
+        const novaColeta = {
+            id: Date.now(),
+            data: new Date().toLocaleString('pt-BR'),
+            valor: valorTotal,
+            detalhe: detalheTexto
+        };
+        
+        historico.push(novaColeta);
+        localStorage.setItem('historico_arrecadacao', JSON.stringify(historico));
+        
+        renderizarHistorico();
+        atualizarContador();
+    }
+
+    function renderizarHistorico() {
+        const container = document.getElementById('lista-historico');
+        container.innerHTML = '';
+
+        if (historico.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted);">Nenhuma coleta registrada ainda.</p>';
+            return;
+        }
+
+        // Mostra do mais recente para o mais antigo
+        [...historico].reverse().forEach(coleta => {
+            const div = document.createElement('div');
+            div.className = 'registro-item';
+            div.innerHTML = `
+                <div class="registro-info">
+                    <h4>Coleta em ${coleta.data}</h4>
+                    <span>${coleta.detalhe}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <strong style="color: #4caf50; font-size: 18px;">R$ ${coleta.valor.toFixed(2).replace('.', ',')}</strong>
+                    <button class="btn-excluir" onclick="excluirColeta(${coleta.id})">Excluir</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function excluirColeta(id) {
+        if (confirm("Deseja excluir esta coleta do histórico?")) {
+            historico = historico.filter(c => c.id !== id);
+            localStorage.setItem('historico_arrecadacao', JSON.stringify(historico));
+            renderizarHistorico();
+            atualizarContador();
+        }
+    }
+
+    function limparTodoHistorico() {
+        if (confirm("⚠️ ATENÇÃO: Isso vai apagar TODAS as coletas. Deseja continuar?")) {
+            historico = [];
+            localStorage.setItem('historico_arrecadacao', JSON.stringify(historico));
+            renderizarHistorico();
+            atualizarContador();
+        }
+    }
+
+    function atualizarContador() {
+        document.getElementById('count-registros').innerText = historico.length;
+    }
+
+    // Inicializa a página
+    window.onload = () => {
+        renderizarHistorico();
+        atualizarContador();
+    };
+</script>
+</body>
+</html>
